@@ -18,3 +18,7 @@ if options.filename == "":
         options.filename = args[0]
 if options.filename != "":
     f = open(options.filename, "rb")
+    f.seek(-4, 2)
+    data = f.read()
+    print(data)
+
