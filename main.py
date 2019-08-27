@@ -24,3 +24,14 @@ if options.filename != "":
     f.seek(16, 1)
     data = f.read()
     print(data)
+    partitions = []
+    while True:
+        if f.read(4) == "\x00\x00\x00\x00":
+            print("True")
+            break
+        break
+    f.seek(-4, 1)
+    print('seek')
+    print(f.read(96))
+    print('unpack')
+    #print(unpack('2b h 7I 16s 48s', f.read(96)))
