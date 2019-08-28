@@ -28,6 +28,11 @@ if options.filename != "":
             break
         f.seek(-4, 1)
         loop = loop + 1
-        print(loop,"partition count")
+        print("\033[1;36m",loop,"partition count\033[0;0m")
         print(unpack('2b h 7I 16s 48s', f.read(96)))
-    print('end')
+    if (options.list):
+        print("coding partition listing")
+    if (options.extract):
+        print("coding extracting")
+    if (options.outdir) != './extract':
+        print(options.outdir)
