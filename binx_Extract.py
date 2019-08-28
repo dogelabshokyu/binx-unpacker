@@ -14,7 +14,7 @@ parser.add_option("-n", "--name", action="store", type="string", dest="name", he
 (options, args) = parser.parse_args()
 if options.filename == "":
 	if str(args) == "[]":
-		print "请使用“Extract.py -h”查看帮助"
+		print("请使用“Extract.py -h”查看帮助")
 	else:
 		options.filename = args[0]
 if options.filename != "":
@@ -35,16 +35,16 @@ if options.filename != "":
 		if partition['no2'] == 4:
 			partition['type'] = "EBR "+str(partition['no1'])
 		if (partition['size1'] != partition['size2']):
-			print "分区'%s'的大小信息不明" % partition['name']
+			print("分区'%s'的大小信息不明" % partition['name'])
 		if partition['flash'] == 340:
 			partition['flash'] = "Yes"
 		if partition['flash'] == 352:
 			partition['flash'] = "No"
 		partitions.append(partition)
 	if (options.list):
-		print "No.  Name       MBR      Id    Flash  Start         Size           /bytes    Blocksize    Pagesize"
+		print("No.  Name       MBR      Id    Flash  Start         Size           /bytes    Blocksize    Pagesize")
 		for part in partitions:
-			print "%-4i %-10s %-8s 0x%-3X %-6s 0x%08X    0x%08X (%9i)   0x%08X   0x%08X\n" % (part['no'], part['name'], part['type'], part['id'], part['flash'], part['start'], part['size1'], part['size1'], part['blocksize'], part['pagesize'])
+			print("%-4i %-10s %-8s 0x%-3X %-6s 0x%08X    0x%08X (%9i)   0x%08X   0x%08X\n" % (part['no'], part['name'], part['type'], part['id'], part['flash'], part['start'], part['size1'], part['size1'], part['blocksize'], part['pagesize']))
 	if (options.extract) | ((options.name) != ""):
 		for part in partitions:
 			if (options.name) != "":
@@ -61,5 +61,5 @@ if options.filename != "":
 					o.write(f.read(part['blocksize']))
 					if (o.tell() == part['size1']): break
 			o.close()
-			print "%i_%s.img已导出" % (part['no'], part['name'])
+			print("%i_%s.img已导出" % (part['no'], part['name']))
 	f.close()
