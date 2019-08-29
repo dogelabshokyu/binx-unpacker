@@ -5,6 +5,8 @@ from struct import *
 from optparse import OptionParser
 import binascii
 loop = 0
+
+
 parser = OptionParser()
 parser.add_option("-i", "--input", action="store", type="string", dest="filename", help="input file to parse", default="")
 parser.add_option("-o", "--outdir", action="store", type="string", dest="outdir", help="Output directory", default="./extract")
@@ -30,9 +32,14 @@ if options.filename != "":
         if loop < 12:
             f.seek(-4, 1)
             loop = loop + 1
+            partition = dict(zip(('no1', 'no2', 'id', 'flash', 'start', 'zero', 'size1', 'size2', 'blocksize', 'pagesize', 'none', 'name'), unpack('2b h 7I 16s 48s', f.read(96))))
+            print(partition)
+'''
             print("\033[1;36m",loop,"partition count\033[0;0m")
-            print(unpack('2b h 7I 16s 48s', f.read(96)))
+            partition_data = unpack('2b h 7I 16s 48s', f.read(96))
+            print(partition_data)
         else:
+            print(f.read(4).decode('utf-16'))
             print("\033[1;31mbreak while\n\033[0;0m")
     print("line 36")
     print(f.read(4).decode('utf-16'))
@@ -42,3 +49,4 @@ if options.filename != "":
         print("coding extracting")
     if (options.outdir) != './extract':
         print(options.outdir)
+'''
