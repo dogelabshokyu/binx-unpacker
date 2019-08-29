@@ -26,15 +26,17 @@ if options.filename != "":
     f.seek(16, 1)
     partitions = []
     while True:
-        if f.read(4).decode('utf-16') == "":
+        if f.read(4) == "\x00\x00\x00\x00": #not working, fixing after make working partition label handling
             print("\033[1;31mZero Detected\n\033[0;0m")
             break
+
         if loop < 12:
             f.seek(-4, 1)
             loop = loop + 1
+            print("\033[1;36m", loop, "partition count\033[0;0m")
             partition = dict(zip(('no1', 'no2', 'id', 'flash', 'start', 'zero', 'size1', 'size2', 'blocksize', 'pagesize', 'none', 'name'), unpack('2b h 7I 16s 48s', f.read(96))))
             print("\033[1;36m",partition,"\033[0;0m")
-            partition['name'] = str(partition['name'].decode('utf-8')).replace("\x00", '')
+            #partition['name'] = partition['name']
             partition['no'] = partition['no1']+partition['no2']
             if partition['no2'] != 4:
                 partition['type'] = "MBR " + str(partition['no2'])
@@ -47,6 +49,10 @@ if options.filename != "":
             if partition['flash'] == 352:
                 partition['flash'] = "No"
             print("\033[0;32m",partition,"\033[0;0m")
+            print("\033[1;95m",partition['name'],"\033[0;0m")
+        else:
+            print("\033[1;31mbreak while\n\033[0;0m")
+            break
 '''
             print("\033[1;36m",loop,"partition count\033[0;0m")
             partition_data = unpack('2b h 7I 16s 48s', f.read(96))
