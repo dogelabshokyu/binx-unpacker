@@ -33,7 +33,20 @@ if options.filename != "":
             f.seek(-4, 1)
             loop = loop + 1
             partition = dict(zip(('no1', 'no2', 'id', 'flash', 'start', 'zero', 'size1', 'size2', 'blocksize', 'pagesize', 'none', 'name'), unpack('2b h 7I 16s 48s', f.read(96))))
-            print(partition)
+            print("\033[1;36m",partition,"\033[0;0m")
+            partition['name'] = str(partition['name'].decode('utf-8')).replace("\x00", '')
+            partition['no'] = partition['no1']+partition['no2']
+            if partition['no2'] != 4:
+                partition['type'] = "MBR " + str(partition['no2'])
+            if partition['no2'] == 4:
+                partition['type'] = "EBR " + str(partition['no1'])
+            if (partition['size1'] != partition['size2']):
+                print("分区'%s'的大小信息不明" % partition['name'])
+            if partition['flash'] == 340:
+                partition['flash'] = "Yes"
+            if partition['flash'] == 352:
+                partition['flash'] = "No"
+            print("\033[0;32m",partition,"\033[0;0m")
 '''
             print("\033[1;36m",loop,"partition count\033[0;0m")
             partition_data = unpack('2b h 7I 16s 48s', f.read(96))
