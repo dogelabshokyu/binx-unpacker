@@ -26,7 +26,7 @@ if options.filename != "":
     f.seek(16, 1)
     partitions = []
     while True:
-        if f.read(4) == "\x00\x00\x00\x00": #not working, fixing after make working partition label handling
+        if f.read(4) == "\x00\x00\x00\x00":
             print("\033[1;31mZero Detected\n\033[0;0m")
             break
 
