@@ -24,12 +24,18 @@ if options.filename != "":
     f.seek(16, 1)
     partitions = []
     while True:
-        if f.read(4) == "\x00\x00\x00\x00":
+        if f.read(4).decode('utf-16') == "":
+            print("\033[1;31mZero Detected\n\033[0;0m")
             break
-        f.seek(-4, 1)
-        loop = loop + 1
-        print("\033[1;36m",loop,"partition count\033[0;0m")
-        print(unpack('2b h 7I 16s 48s', f.read(96)))
+        if loop < 12:
+            f.seek(-4, 1)
+            loop = loop + 1
+            print("\033[1;36m",loop,"partition count\033[0;0m")
+            print(unpack('2b h 7I 16s 48s', f.read(96)))
+        else:
+            print("\033[1;31mbreak while\n\033[0;0m")
+    print("line 36")
+    print(f.read(4).decode('utf-16'))
     if (options.list):
         print("coding partition listing")
     if (options.extract):
