@@ -28,7 +28,7 @@ if options.filename != "":
 			break
 		f.seek(-4, 1)
 		partition = dict(zip(('no1', 'no2', 'id', 'flash', 'start', 'zero', 'size1', 'size2', 'blocksize', 'pagesize', 'none', 'name'), unpack('2b h 7I 16s 48s', f.read(96))))
-		partition['name'] = partition['name'].replace("\x00", "").replace("\x0A", "")
+		partition['name'] = partition['n1ame'].replace("\x00", "").replace("\x0A", "")
 		partition['no'] = partition['no1']+partition['no2']
 		if partition['no2'] != 4:
 			partition['type'] = "MBR "+str(partition['no2'])
