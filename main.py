@@ -22,6 +22,8 @@ if options.filename == "":
 if options.filename != "":
     f = open(options.filename, "rb")
     f.seek(-4, 2)
+    print(unpack("I", f.read(4))[0])
+    f.seek(-4, 2)
     f.seek(unpack("I", f.read(4))[0])
     f.seek(16, 1)
     partitions = []
@@ -43,13 +45,13 @@ if options.filename != "":
             if partition['no2'] == 4:
                 partition['type'] = "EBR " + str(partition['no1'])
             if (partition['size1'] != partition['size2']):
-                print("分区'%s'的大小信息不明" % partition['name'])
+                print("Invalid Partition %s" % partition['name'])
             if partition['flash'] == 340:
                 partition['flash'] = "Yes"
             if partition['flash'] == 352:
                 partition['flash'] = "No"
-            print("\033[0;32m",partition,"\033[0;0m")
-            print("\033[1;95m",partition['name'],"\033[0;0m")
+            #print("\033[0;32m",partition,"\033[0;0m")
+            #print("\033[1;95m",partition['name'].decode(),"\033[0;0m")
         else:
             print("\033[1;31mbreak while\n\033[0;0m")
             break
