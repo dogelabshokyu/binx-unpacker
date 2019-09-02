@@ -34,8 +34,12 @@ if options.filename != "":
 
         if loop < 12:
             f.seek(-4, 1)
+            print(f.read(4))
+            f.seek(-4, 1)
             loop = loop + 1
             print("\033[1;36m", loop, "partition count\033[0;0m")
+            print(unpack('2b h 7l 16s', f.read(48)))
+            f.seek(-48, 1)
             partition = dict(zip(('no1', 'no2', 'id', 'flash', 'start', 'zero', 'size1', 'size2', 'blocksize', 'pagesize', 'none', 'name'), unpack('2b h 7I 16s 48s', f.read(96))))
             print("\033[1;36m",partition,"\033[0;0m")
             #partition['name'] = partition['name']
