@@ -28,13 +28,11 @@ if options.filename != "":
     f.seek(16, 1)
     partitions = []
     while True:
-        if f.read(4) == "\x00\x00\x00\x00":
+        if f.read(4) == "\x0A\x0A\x0A":
             print("\033[1;31mZero Detected\n\033[0;0m")
             break
 
         if loop < 12:
-            f.seek(-4, 1)
-            print(f.read(4))
             f.seek(-4, 1)
             loop = loop + 1
             print("\033[1;36m", loop, "partition count\033[0;0m")
