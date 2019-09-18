@@ -62,19 +62,3 @@ if options.filename != "":
     for part in partitions:
         print("%-4i %-10s %-8s 0x%-3X %-6s 0x%08X    0x%08X (%9i)   0x%08X   0x%08X\n" % (part['no'], part['name'], part['type'], part['id'], part['flash'], part['start'], part['size1'], part['size1'], part['blocksize'], part['pagesize']))
 
-'''
-            print("\033[1;36m",loop,"partition count\033[0;0m")
-            partition_data = unpack('2b h 7I 16s 48s', f.read(96))
-            print(partition_data)
-        else:
-            print(f.read(4).decode('utf-16'))
-            print("\033[1;31mbreak while\n\033[0;0m")
-    print("line 36")
-    print(f.read(4).decode('utf-16'))
-    if (options.list):
-        print("coding partition listing")
-    if (options.extract):
-        print("coding extracting")
-    if (options.outdir) != './extract':
-        print(options.outdir)
-'''
