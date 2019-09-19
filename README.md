@@ -1,4 +1,4 @@
-#BINx Extract
+# BINx Extract
 
-##unpack Pantech BINX or PDL Firmware
+## unpack Pantech BINX or PDL Firmware
 ![Difference](/image/binx_.PNG)
