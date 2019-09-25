@@ -14,6 +14,8 @@ parser.add_option("-l", "--list", action="store_true", dest="list", help="List o
 parser.add_option("-e", "--extract", action="store_true", dest="extract", help="Extract all partitions(without \"-n NAME\")", default = False)
 parser.add_option("-n", "--name", action="store", type="string", dest="name", help="Extract partition by name", default = "")
 parser.add_option("-d", "--debug", action="store_true", dest="debug", help="Turn on Debug Mode")
+parser.add_option("-p", "--partition", action="store_tru", dest="partition", help="Extract partition info as JSON file")
+
 (options, args) = parser.parse_args()
 if options.filename == "":
     if str(args) == "[]":
