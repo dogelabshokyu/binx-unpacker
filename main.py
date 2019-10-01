@@ -4,9 +4,6 @@
 from struct import *
 from optparse import OptionParser
 
-loop = 0
-
-
 parser = OptionParser()
 parser.add_option("-i", "--input", action="store", type="string", dest="filename", help="input file to parse", default="")
 parser.add_option("-o", "--outdir", action="store", type="string", dest="outdir", help="Output directory", default="./extract")
@@ -45,6 +42,7 @@ if options.filename != "":
             partition['flash'] = "No"
         partition['name'] = partition['name'].decode('ascii')
         partition['name'] = partition['name'].replace("\x00", "").replace("\x0A", "")
+        #print(partition)
         partitions.append(partition)
         f.seek(4, 1)
         if f.read(4) == b'\x00\x00\x00\x00':
@@ -58,9 +56,11 @@ if options.filename != "":
             print("%-4i %-10s %-8s 0x%-3X %-6s 0x%08X    0x%08X (%9i)   0x%08X   0x%08X\n" % (part['no'], part['name'], part['type'], part['id'], part['flash'], part['start'], part['size1'], part['size1'], part['blocksize'], part['pagesize']))
     if options.partition:
         print("extracting partition info as JSON")
+        print("\033[1;31mThis is experimental function.\033[0;0m")
+        print("output C:/pdl/test.txt)
         partiton_json = open("c:/pdl/test.txt", 'w')
         for data in partitions:
             print(data)
             partiton_json.write(str(data)+"\n")
     if options.debug:
-        print("Making Now")
+        print("Not yet")
