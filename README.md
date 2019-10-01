@@ -1,6 +1,6 @@
 # BINX Unpacker
 
-## unpack Pantech BINX or PDL Firmware
+## unpack Pantech PDL(BINX) Firmware
 ![A770K](/image/BINX_20191001_A770K.PNG)
 IM-A770K_S0833317 Partition info
 
