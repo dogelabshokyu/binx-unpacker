@@ -21,6 +21,14 @@ if options.filename == "":
         options.filename = args[0]
 if options.filename != "":
     f = open(options.filename, "rb")
+    if f.read(16).decode() == "$PDL_PHONE_INFO_":
+        print("PHONE INFO Detected")
+        f.seek(36, 0)
+        print("Model : ",f.read(16).decode())
+        f.seek(52, 0)
+        print("Version : ",f.read(16).decode())
+        f.seek(76, 0)
+        print("Build time : ",f.read(32).decode())
     f.seek(-4, 2)
     f.seek(unpack("I", f.read(4))[0])
     f.seek(16, 1)
@@ -57,7 +65,7 @@ if options.filename != "":
     if options.partition:
         print("extracting partition info as JSON")
         print("\033[1;31mThis is experimental function.\033[0;0m")
-        print("output C:/pdl/test.txt)
+        print("output C:/pdl/test.txt")
         partiton_json = open("c:/pdl/test.txt", 'w')
         for data in partitions:
             print(data)
