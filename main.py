@@ -3,6 +3,8 @@
 
 from struct import *
 from optparse import OptionParser
+import os
+
 
 parser = OptionParser()
 parser.add_option("-i", "--input", action="store", type="string", dest="filename", help="input file to parse", default="")
@@ -22,13 +24,16 @@ if options.filename == "":
 if options.filename != "":
     f = open(options.filename, "rb")
     if f.read(16).decode() == "$PDL_PHONE_INFO_":
-        print("PHONE INFO Detected")
+        print("\x1b[6;30;42mPHONE INFO Detected\x1b[0m")
         f.seek(36, 0)
-        print("Model : ",f.read(16).decode())
+        phone_model = f.read(16).decode().replace("\x00", "")
+        print("Model : ", phone_model)
         f.seek(52, 0)
-        print("Version : ",f.read(16).decode())
+        fw_version = f.read(16).decode().replace("\x00", "")
+        print("Version : ", fw_version)
         f.seek(76, 0)
-        print("Build time : ",f.read(32).decode())
+        fw_build_time = f.read(32).decode().replace("\x00", "")
+        print("Build time : ",fw_build_time)
     f.seek(-4, 2)
     f.seek(unpack("I", f.read(4))[0])
     f.seek(16, 1)
@@ -62,6 +67,23 @@ if options.filename != "":
         print("No.  Name       MBR      Id    Flash  Start         Size           /bytes    Blocksize    Pagesize")
         for part in partitions:
             print("%-4i %-10s %-8s 0x%-3X %-6s 0x%08X    0x%08X (%9i)   0x%08X   0x%08X\n" % (part['no'], part['name'], part['type'], part['id'], part['flash'], part['start'], part['size1'], part['size1'], part['blocksize'], part['pagesize']))
+    if (options.extract) | ((options.name) != ""):
+        for part in partitions:
+            if (options.name) != "":
+                if (part['name'].lower() != options.name.lower()):
+                    continue
+            if not os.path.exists(options.outdir + "/" + phone_model + "_" + fw_version):
+                os.makedirs(options.outdir + "/" + phone_model + "_" + fw_version)
+            o = open(options.outdir + "/" + phone_model + "_" + fw_version + "/" + str(part['no']) + "_" + part['name'] + ".img", "wb")
+            f.seek(part['start'])
+            if (part['blocksize'] == part['size1']):
+                o.write(f.read(part['size1']))
+            else:
+                for x in range(part['size1']):
+                    o.write(f.read(part['blocksize']))
+                    if (o.tell() == part['size1']): break
+            o.close()
+            print("Extract %i_%s.img" % (part['no'], part['name']))
     if options.partition:
         print("extracting partition info as JSON")
         print("\033[1;31mThis is experimental function.\033[0;0m")
@@ -72,3 +94,4 @@ if options.filename != "":
             partiton_json.write(str(data)+"\n")
     if options.debug:
         print("Not yet")
+    f.close()
