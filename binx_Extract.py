@@ -1,6 +1,6 @@
 #-*-coding:utf-8-*-
-#python 2.7
-#dont edit code, only translate chinese
+#!/usr/bin/python
+# archive original code
 from struct import *
 from optparse import OptionParser
 import os
