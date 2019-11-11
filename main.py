@@ -4,12 +4,13 @@
 from struct import *
 from optparse import OptionParser
 import os
-
+import json
 
 parser = OptionParser()
 parser.add_option("-i", "--input", action="store", type="string", dest="filename", help="input file to parse", default="")
 parser.add_option("-o", "--outdir", action="store", type="string", dest="outdir", help="Output directory", default="./extract")
 parser.add_option("-l", "--list", action="store_true", dest="list", help="List of partitions")
+parser.add_option("-j", "--json", action="store_true", dest="json", help="Make List of partitions which formatting as json")
 parser.add_option("-e", "--extract", action="store_true", dest="extract", help="Extract all partitions(without \"-n NAME\")", default = False)
 parser.add_option("-n", "--name", action="store", type="string", dest="name", help="Extract partition by name", default="")
 parser.add_option("-d", "--debug", action="store_true", dest="debug", help="Turn on Debug Mode")
@@ -38,7 +39,6 @@ if options.filename != "":
     f.seek(unpack("I", f.read(4))[0])
     f.seek(16, 1)
     partitions = []
-    json_partitions = {}
     while True:
         partition = dict(zip(('no1', 'no2', 'id', 'flash', 'start', 'zero', 'size1', 'size2', 'blocksize', 'pagesize', 'none', 'name'), unpack('2b h 7I 16s 16s', f.read(64))))
         f.seek(32, 1)
@@ -66,6 +66,30 @@ if options.filename != "":
         print("No.  Name       MBR      Id    Flash  Start         Size           /bytes    Blocksize    Pagesize")
         for part in partitions:
             print("%-4i %-10s %-8s 0x%-3X %-6s 0x%08X    0x%08X (%9i)   0x%08X   0x%08X\n" % (part['no'], part['name'], part['type'], part['id'], part['flash'], part['start'], part['size1'], part['size1'], part['blocksize'], part['pagesize']))
+    if options.json:
+        total_section = len(partitions)
+        print("total sector :", total_section)
+        json_partitions = {"PDL_Partitions": {}}
+        json_partitions["PDL_Partitions"] = {"Model": phone_model, "Version": fw_version, "Build_time": fw_build_time, "Partition_info": {}}
+        for i in range(total_section):
+            sector_name = "section" + str(i)
+            sector_dict = {sector_name: {"no1": partitions[i]['no1'],
+                                         "no2": partitions[i]['no2'],
+                                         "id": partitions[i]['id'],
+                                         "flash": partitions[i]['flash'],
+                                         "start": partitions[i]['start'],
+                                         "zero": partitions[i]['zero'],
+                                         "size1": partitions[i]['size1'],
+                                         "size2": partitions[i]['size2'],
+                                         "blocksize": partitions[i]['blocksize'],
+                                         "pagesize": partitions[i]['pagesize'],
+                                         "none": partitions[i]['none'],
+                                         "name": partitions[i]['name']
+                                         }
+                           }
+            json_partitions["PDL_Partitions"]["Partition_info"].update(sector_dict)
+        print(json_partitions)
+        #print(json.dump(json_partitions, fp=))
     if options.extract | ((options.name) != ""):
         for part in partitions:
             if (options.name) != "":
