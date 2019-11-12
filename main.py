@@ -5,6 +5,7 @@ from struct import *
 from optparse import OptionParser
 import os
 import json
+import pyprnt
 
 parser = OptionParser()
 parser.add_option("-i", "--input", action="store", type="string", dest="filename", help="input file to parse", default="")
@@ -54,7 +55,7 @@ if options.filename != "":
         if partition['flash'] == 352:
             partition['flash'] = "No"
         partition['name'] = partition['name'].decode('ascii')
-        partition['name'] = partition['name'].replace("\x00", "").replace("\x0A", "")
+        partition['name'] = partition['name'].replace("\x00", "").replace("\x0A", "").replace("\x01", "")
         partitions.append(partition)
         f.seek(4, 1)
         if f.read(4) == b'\x00\x00\x00\x00':
@@ -83,13 +84,15 @@ if options.filename != "":
                                          "size2": partitions[i]['size2'],
                                          "blocksize": partitions[i]['blocksize'],
                                          "pagesize": partitions[i]['pagesize'],
-                                         "none": partitions[i]['none'],
                                          "name": partitions[i]['name']
                                          }
                            }
             json_partitions["PDL_Partitions"]["Partition_info"].update(sector_dict)
-        print(json_partitions)
-        #print(json.dump(json_partitions, fp=))
+        partitions_dump = json.dumps(json_partitions, ensure_ascii=False)
+        json_file = open("./PDL_Partition_info_"+phone_model+"_"+fw_version+".json", "w")
+        json_file.write(partitions_dump)
+        print("PDL Partiton info Saved")
+        json_file.close()
     if options.extract | ((options.name) != ""):
         for part in partitions:
             if (options.name) != "":
@@ -109,9 +112,6 @@ if options.filename != "":
             print("Extract %i_%s.img" % (part['no'], part['name']))
     if options.partition:
         print("extracting partition info as JSON")
-        print("\033[1;31mThis is experimental function.\033[0;0m")
-        print("output C:/pdl/test.txt")
-        partiton_json = open("c:/pdl/test.txt", 'w')
         for data in partitions:
             print(data)
             partiton_json.write(str(data)+"\n")
