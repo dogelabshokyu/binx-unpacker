@@ -5,7 +5,6 @@ from struct import *
 from optparse import OptionParser
 import os
 import json
-import pyprnt
 
 parser = OptionParser()
 parser.add_option("-i", "--input", action="store", type="string", dest="filename", help="input file to parse", default="")
