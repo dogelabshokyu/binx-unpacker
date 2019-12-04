@@ -5,6 +5,7 @@ from struct import *
 from optparse import OptionParser
 import os
 import json
+import binascii
 
 parser = OptionParser()
 parser.add_option("-i", "--input", action="store", type="string", dest="filename", help="input file to parse", default="")
@@ -40,7 +41,11 @@ if options.filename != "":
     partitions = []
     while True:
         partition = dict(zip(('no1', 'no2', 'id', 'flash', 'start', 'zero', 'size1', 'size2', 'blocksize', 'pagesize', 'none', 'name'), unpack('2b h 7I 16s 16s', f.read(64))))
-        f.seek(32, 1)
+        f.seek(12, 1)
+        partition['checksum'] = binascii.hexlify(f.read(4)).decode().upper()
+        #print(partition['checksum'])
+        f.seek(16, 1)
+        #f.seek(32, 1)
         partition['no'] = partition['no1']+partition['no2']
         if partition['no2'] != 4:
             partition['type'] = "MBR " + str(partition['no2'])
@@ -57,14 +62,14 @@ if options.filename != "":
         partitions.append(partition)
         f.seek(4, 1)
         if f.read(4) == b'\x00\x00\x00\x00':
-            print("\033[1;31mEnd Detected\033[0;0m")
+            print("\033[94mRead Partition Info Sucess\n\033[1;31mEnd Detected\033[0;0m")
             break
         else:
             f.seek(-8, 1)
     if options.list:
-        print("No.  Name       MBR      Id    Flash  Start         Size           /bytes    Blocksize    Pagesize")
+        print("No.  Name       MBR      Id    Flash  Start         Size            /bytes    Blocksize    Pagesize     Checksum")
         for part in partitions:
-            print("%-4i %-10s %-8s 0x%-3X %-6s 0x%08X    0x%08X (%9i)   0x%08X   0x%08X\n" % (part['no'], part['name'], part['type'], part['id'], part['flash'], part['start'], part['size1'], part['size1'], part['blocksize'], part['pagesize']))
+            print("%-4i %-10s %-8s 0x%-3X %-6s 0x%08X    0x%08X (%10i)   0x%08X   0x%08X   %08s\n" % (part['no'], part['name'], part['type'], part['id'], part['flash'], part['start'], part['size1'], part['size1'], part['blocksize'], part['pagesize'], part['checksum']))
     if options.extract | ((options.name) != ""):
         for part in partitions:
             if (options.name) != "":
