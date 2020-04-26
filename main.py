@@ -5,7 +5,6 @@ from struct import *
 from optparse import OptionParser
 import os
 import json
-import binascii
 
 parser = OptionParser()
 parser.add_option("-i", "--input", action="store", type="string", dest="filename", help="input file to parse", default="")
@@ -35,19 +34,22 @@ if options.filename != "":
         f.seek(76, 0)
         fw_build_time = f.read(32).decode().replace("\x00", "")
         print("Build time : ", fw_build_time)
-    f.seek(-4, 2)
+    f.seek(-20, 2)
+    sectioninfo_checksum = f.read(4).hex()
+    f.seek(12, 1)
     f.seek(unpack("I", f.read(4))[0])
     pdl_ver = f.read(1).hex()
     f.seek(3, 1)
     pdl_image_checksum = f.read(4).hex()
     print("PDL Ver : ", pdl_ver)
     print("PDL Checksum : ", pdl_image_checksum)
+    print("SectionInfo Checksum : ", sectioninfo_checksum.upper())
     f.seek(8, 1)
     partitions = []
     while True:
         partition = dict(zip(('no1', 'no2', 'id', 'flash', 'start', 'zero', 'size1', 'size2', 'blocksize', 'pagesize', 'none', 'name'), unpack('2b h 7I 16s 16s', f.read(64))))
         f.seek(12, 1)
-        partition['checksum'] = binascii.hexlify(f.read(4)).decode().upper()
+        partition['checksum'] = f.read(4).hex().upper()
         #print(partition['checksum'])
         f.seek(16, 1)
         #f.seek(32, 1)
