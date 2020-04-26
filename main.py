@@ -37,7 +37,12 @@ if options.filename != "":
         print("Build time : ", fw_build_time)
     f.seek(-4, 2)
     f.seek(unpack("I", f.read(4))[0])
-    f.seek(16, 1)
+    pdl_ver = f.read(1).hex()
+    f.seek(3, 1)
+    pdl_image_checksum = f.read(4).hex()
+    print("PDL Ver : ", pdl_ver)
+    print("PDL Checksum : ", pdl_image_checksum)
+    f.seek(8, 1)
     partitions = []
     while True:
         partition = dict(zip(('no1', 'no2', 'id', 'flash', 'start', 'zero', 'size1', 'size2', 'blocksize', 'pagesize', 'none', 'name'), unpack('2b h 7I 16s 16s', f.read(64))))
