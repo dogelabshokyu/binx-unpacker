@@ -14,3 +14,6 @@ Right : binx-extract (https://blog.csdn.net/su_ky/article/details/7799247)
 IM-100S
 IM-100K
 IM-100GN
+
+## Memo
+BINX -SkyBinTool-> BIN(PDL)
