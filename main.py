@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-# Edit "binx_Extract.py"
 
 from struct import *
 from optparse import OptionParser
@@ -38,8 +37,7 @@ if options.filename != "":
     sectioninfo_checksum = f.read(4).hex()
     f.seek(12, 1)
     f.seek(unpack("I", f.read(4))[0])
-    pdl_ver = f.read(1).hex()
-    f.seek(3, 1)
+    pdl_ver = f.read(4).hex()
     pdl_image_checksum = f.read(4).hex()
     print("PDL Ver : ", pdl_ver)
     print("PDL Checksum : ", pdl_image_checksum)

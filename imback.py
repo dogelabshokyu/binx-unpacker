@@ -1,5 +1,4 @@
-#Edit "binx_Extract.py"
-#python 3.x
+#!/usr/bin/python3
 
 from struct import *
 from optparse import OptionParser
@@ -22,8 +21,8 @@ if options.filename == "":
 if options.filename != "":
     f = open(options.filename, "rb")
     f.seek(-8, 2)
-    f.seek(unpack("I", f.read(4))[0])
-    f.seek(16, 1)
+    f.seek(unpack("I", f.read(4))[0]) #comfirm
+    f.seek(16, 1) #
     partitions = []
     json_partitions = {}
     while True:
