@@ -57,14 +57,22 @@ for i in range(sect_info_hdr_Cnt_):
     Section_Block_sz = unpack("I", f.read(0x04))[0]
     Section_Page_sz = unpack("I", f.read(0x04))[0]
     f.seek(0x14, 1)
-    Section_Name = f.read(0x0C).decode()
+    Section_Name = f.read(0x0C).decode().replace("\x00", "").replace("\x0A", "").replace("\x01", "")
     f.seek(0x10, 1)
     Section_Checksum = f.read(4).hex().upper()
     if Section_sz_0 == Section_sz_1:
         Section_sz = Section_sz_0
     else:
         print("No : ", Section_No_, "File Size Different")
-    Section = {"No": Section_No_, "Type": Section_Type_, "Size": Section_sz, "BlockSize": Section_Block_sz,
+    Section = {"No": Section_No_, "Type": Section_Type_,"Start": Section_Start,"Size1": Section_sz_0, "Size2": Section_sz_1, "BlockSize": Section_Block_sz,
                "PageSize": Section_Page_sz, "Name": Section_Name, "Checksum": Section_Checksum}
     partitions.append(Section)
 prnt(partitions)
+for part in partitions:
+    if not os.path.exists(MODEL_NAME + "_" + PANTECH_BUILD_VER):
+        os.makedirs(MODEL_NAME + "_" + PANTECH_BUILD_VER)
+    o = open(MODEL_NAME + "_" + PANTECH_BUILD_VER + "/" + str(part['No']) + "_" + part['Name'] + ".img", "wb")
+    f.seek(part['Start'])
+    o.write(f.read(part['Size1']))
+    o.close()
+    print("Extract %i_%s.img" % (part['No'], part['Name']))
