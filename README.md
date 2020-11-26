@@ -10,10 +10,14 @@ IM-A910S_S0224129 Partition info
 Left : binx-unpacker (main.py)  
 Right : binx-extract (https://blog.csdn.net/su_ky/article/details/7799247)
 
-## Not working
-IM-100S
-IM-100K
-IM-100GN
+## Working
+PDL (except version.5)  
+
+## Working Experimental
+PDL version.5 
+- IM-100S
+- IM-100K
+- IM-100GN
 
 ## Memo
 BINX -SkyBinTool-> BIN(PDL)
