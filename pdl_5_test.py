@@ -30,16 +30,16 @@ f.seek(unpack("Q", f.read(0x08))[0], 0)
 # start sectioninfo header (length = Hdr_size_)
 sect_info_hdr_Ver = unpack("I", f.read(0x04))[0]
 sect_info_hdr_Hdr_size_ = unpack("I", f.read(0x04))[0]
-sect_info_hdr_Pdl_checksum_ = f.read(0x04).hex()
+sect_info_hdr_Pdl_checksum_ = f.read(0x04).hex().upper()
 sect_info_hdr_Cnt_ = unpack("I", f.read(0x04))[0]  # int.from_bytes(f.read(0x04), byteorder='little')
-sect_info_hdr_Struct_size_ = unpack("I", f.read(0x04))[0]  # int.from_bytes(f.read(0x04), byteorder='little')
+sect_info_hdr_Struct_size_ = unpack("I", f.read(0x04))[0]  # int.from_bytes(f.readclear(0x04), byteorder='little')
 f.seek(0x08, 1)
 f.seek(0x08, 1)
 
 #####################################
 PDL_INFO = {"PDL Version": sect_info_hdr_Ver, "Model": MODEL_NAME, "FW Version": PANTECH_BUILD_VER,
             "FW Build Date": fw_build_date, "FW Build time": fw_build_time}
-PDL_section_info = {"Section Head Length": sect_info_hdr_Hdr_size_, "All section checksum": sect_info_hdr_Pdl_checksum_,
+PDL_section_info = {"Section Head Length": sect_info_hdr_Hdr_size_, "PDL checksum": sect_info_hdr_Pdl_checksum_,
                     "Section Index": sect_info_hdr_Cnt_, "Section struct size": sect_info_hdr_Struct_size_}
 PDL = [PDL_INFO, PDL_section_info]
 prnt(PDL)
@@ -59,15 +59,20 @@ for i in range(sect_info_hdr_Cnt_):
     f.seek(0x14, 1)
     Section_Name = f.read(0x0C).decode().replace("\x00", "").replace("\x0A", "").replace("\x01", "")
     f.seek(0x10, 1)
-    Section_Checksum = f.read(4).hex().upper()
+    Section_Checksum = f.read(4).hex()
     if Section_sz_0 == Section_sz_1:
         Section_sz = Section_sz_0
     else:
         print("No : ", Section_No_, "File Size Different")
-    Section = {"No": Section_No_, "Type": Section_Type_,"Start": Section_Start,"Size1": Section_sz_0, "Size2": Section_sz_1, "BlockSize": Section_Block_sz,
-               "PageSize": Section_Page_sz, "Name": Section_Name, "Checksum": Section_Checksum}
+    Section = {"No": Section_No_, "Type": Section_Type_,"Start": Section_Start,"Size1": Section_sz_0, "Size2": Section_sz_1,
+               "BlockSize": Section_Block_sz, "PageSize": Section_Page_sz, "Name": Section_Name, "Checksum": Section_Checksum}
     partitions.append(Section)
-prnt(partitions)
+#prnt(partitions)
+print("No.  Name         Type   Start      Size       Blocksize  Pagesize   Checksum")
+for part in partitions:
+    print("%-4s %-12s 0x%-04X 0x%08X 0x%08X 0x%08X 0x%08X 0x%08s"
+          % (part['No'], part['Name'].upper(), part['Type'], part['Start'], part['Size1'], part['BlockSize'], part['PageSize'], part['Checksum'].upper()))
+
 for part in partitions:
     if not os.path.exists(MODEL_NAME + "_" + PANTECH_BUILD_VER):
         os.makedirs(MODEL_NAME + "_" + PANTECH_BUILD_VER)
